@@ -4,16 +4,12 @@ const cheerio = require('cheerio');
 const ARsearchUrl = 'https://www.allrecipes.com/search/results/?wt=';
 const allrecipesUrl = 'https://www.allrecipes.com/recipe/';
 
-function searchRecipes (searchTerm) {
-  var p;
-
-  for (p=1; p<10000; p++) 
-  {
-    return fetch (`${ARsearchUrl}${searchTerm}&page=${p}`)
+function searchRecipesFunc(recipes,searchTerm,p) {
+  return fetch (`${ARsearchUrl}${searchTerm}&page=${p}`)
     .then(response => response.text())
     .then(body => { 
 
-    const recipes = [];
+   
     const $ = cheerio.load(body);
 
 
@@ -34,11 +30,20 @@ function searchRecipes (searchTerm) {
       recipes.push(recipe);
       
     });
-
-
-    return recipes;
   }); 
+}
+
+async function searchRecipes (searchTerm) {
+  var p;
+  const recipes = [];
+
+  for (p=1; p<10; p++) 
+  {
+    console.log("Scrapping page :"+p);
+    await searchRecipesFunc(recipes,searchTerm,p);
   }
+
+  return recipes;
   
 }
 
